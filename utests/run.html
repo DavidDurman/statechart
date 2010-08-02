@@ -1,0 +1,29 @@
+<html>
+    <head>
+	<script type="text/javascript" src="core.js"></script>
+	<script type="text/javascript" src="../src/statechart.js"></script>
+        <title>Runner.</title>
+    </head>
+    <body>
+        <script type="text/javascript">
+            function gup(name){
+              name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+              var regexS = "[\\?&]" + name + "=([^&#]*)";
+              var regex = new RegExp(regexS);
+              var results = regex.exec(window.location.href);
+              if (results == null)
+                return "";
+              else
+                return results[1];
+            }
+
+            var srcs = gup("unit").split(',');
+	    for (var i = 0, l = srcs.length; i < l; i++){
+	      var sel = document.createElement("script");
+              sel.type = "text/javascript";
+              sel.src = srcs[i] + ".js";
+              document.head.appendChild(sel);
+	    }
+        </script>
+    </body>
+</html>
