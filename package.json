@@ -1,0 +1,25 @@
+{ 
+  "name": "statechart",
+  "version": "0.1.0",
+  "description": "StateChart implementation.",
+  "homepage": "http://github.com/DavidDurman/statechart/",
+  "keywords": ["statechart", "state machine"],
+  "contributors": [ "David Durman <daviddurman@gmail.com> (http://www.daviddurman.com)" ],
+  "repository": { 
+      "type": "git",
+      "url": "git://github.com/DavidDurman/statechart.git"
+  },
+  "bugs": { 
+      "web": "http://github.com/DavidDurman/statechart/issues/",
+      "mail": "daviddurman@gmail.com"
+  },
+  "directories": { 
+      "doc": "./doc",
+      "lib": "./lib",
+      "test": "./test"
+  },
+  "main": "./lib/statechart.js",
+  "scripts": { "test": "node test/all.js" },
+  "engines": ["v8", "ejs", "node", "rhino", "browser"],
+  "licenses" : [ { "type" : "GPL 2.0" } ]
+}
