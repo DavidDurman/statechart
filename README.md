@@ -25,6 +25,8 @@ Defining a basic state machine
 State machine is defined as an object with `initialState` and `states` properties. The former defines
 the first state we want our machine to enter. The latter is an object with states, events and actions:
 
+[![Light switch statechart](http://figurepool.com/figure/view/7774b3b7f5ceba1d47fac95f540f82ec.png)](http://figurepool.com/figure/view/Light_switch_statechart-7774b3b7f5ceba1d47fac95f540f82ec.html)
+
     var lightSwitch = _.extend({
         
         initialState: "Out",
