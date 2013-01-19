@@ -101,6 +101,8 @@ Hierarchical states
 States can be nested to an arbitrary level. State nesting leads to **behavioral inheritance** [Samek+ 00, 02].
 This allows new states to be specified **by difference** rather then created from scratch each time.
 
+[![Hierarchical states](http://figurepool.com/figure/view/7774b3b7f5ceba1d47fac95f540f86e1.png)](http://figurepool.com/figure/view/Hierarchical_states-7774b3b7f5ceba1d47fac95f540f86e1.html)
+
 State nesting can simply be done by nesting objects.
 
     'MyState': {
