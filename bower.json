@@ -1,0 +1,13 @@
+{
+    "name": "statechart",
+    "version": "0.1.1",
+    "main": "path/to/main.css",
+    "ignore": [
+        "node_modules"
+    ],
+    "dependencies": {
+    },
+    "devDependencies": {
+        "mocha": "1.15.1"
+    }
+}
