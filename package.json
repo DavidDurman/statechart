@@ -10,7 +10,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/DavidDurman/statechart.git"
+    "url": "https://github.com/DavidDurman/statechart.git"
   },
   "bugs": {
     "web": "http://github.com/DavidDurman/statechart/issues/",
