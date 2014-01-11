@@ -3,12 +3,10 @@
   "version": "0.1.1",
   "description": "StateChart implementation.",
   "homepage": "http://github.com/DavidDurman/statechart/",
+  "author": "David Durman <daviddurman@gmail.com>",
   "keywords": [
     "statechart",
     "state machine"
-  ],
-  "contributors": [
-    "David Durman <daviddurman@gmail.com> (http://www.daviddurman.com)"
   ],
   "repository": {
     "type": "git",
