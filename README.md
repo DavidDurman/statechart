@@ -126,3 +126,7 @@ Copyright (c) 2010 David Durman
 
 Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at 
 http://opensource.org/licenses/MIT.
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/DavidDurman/statechart/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
