@@ -25,6 +25,10 @@ Defining a basic state machine
 State machine is defined as an object with `initialState` and `states` properties. The former defines
 the first state we want our machine to enter. The latter is an object with states, events and actions:
 
+States can have the following attributes:
+* `states` (object) an associative array of states to whom this state is the parent state or "superstate".
+* any other attributes of the object are assumed to be events with the object key being the event's name. Events are detailed below.
+
 [![Light switch statechart](http://figurepool.com/figure/view/7774b3b7f5ceba1d47fac95f540f82ec.png)](http://figurepool.com/figure/view/Light_switch_statechart-7774b3b7f5ceba1d47fac95f540f82ec.html)
 
     var lightSwitch = _.extend({
@@ -54,8 +58,25 @@ the first state we want our machine to enter. The latter is an object with state
 Reserved events
 ---------------
 
-The state machine dispatched three reserved events: `init`, `entry` and `exit`. These are special
+An event is a stimulus upon which you might want to react. An event can have the following attributes:
+
+* optional `target` (string, state name) which indicates this event should trigger a transition to another state.
+* optional `action` (function or array of events) which indicates which action should be taken when this event is triggered and its guard has returned true.
+* optional `guard` (function, takes the second argument to `fsm.dispatch()`, return true or false) which provides the condition that determines whether the state machine should transition to the `target` state.
+
+The state machine dispatches three reserved events: `init`, `entry` and `exit`. These are special
 events that you might react on when an initial transition to a state takes place, when a state is entered or exited.
+They default to empty for every state and run on every transition whether defined in that particular state or not.
+You do not need to call `fsm.dispatch('init')` to init a state, for example, whether you have overridden the default
+empty event or not.
+
+If you would like to transition immediately upon initializing a state, set it's `init` attribute to the name of the
+state to which the state machine should transition.  Note: setting the `init` attribute to the name of an event
+that you would like to dispatch is NOT valid and will cause errors to be thrown.
+
+    myState: {
+        init: "someOtherState"
+    }
 
 Assume we use the same machine as defined in the above example and run it like this:
 
@@ -67,11 +88,15 @@ The resulting order of transitions would then be:
 
 * [Out] entry
 * [Out] init
-* ... now the `out` event was dispatched
+
+State machine is in the `Out` state and is stable, waiting for input. Something external to the state machine, like your computer program, dispatches the `out` event.
+
 * [Out] exit
 * [Out] entry
 * [Out] init
-* ... now the `on` event was dispatched
+
+State machine is in the `On` state. The `on` event is dispatched
+
 * [Out] exit
 * [On] entry
 * [On] init
@@ -93,6 +118,15 @@ guard the transition if there is a certain condition that must be met in order f
     },
     'AnotherState': {
     }
+
+Event Actions
+-------------
+
+If the event is specified as an array of events, each event's `guard` will be used to determine if that event should be triggered.  All events in the array whose `guard` returns true will be triggered.
+
+Transitioning from any state to itself will cause the `exit`, `init`, and `enter` events to be triggered again.
+
+If an event is triggered from a state to which it does not belong, it will not be handled. It will be ignored.
 
 
 Hierarchical states
@@ -117,6 +151,12 @@ State nesting can simply be done by nesting objects.
 
 See https://github.com/DavidDurman/statechart/blob/master/test/samek.js for a complete example of a non-trivial
 state machine.
+
+Troubleshooting
+---------------
+
+### TypeError: Cannot read property 'equals' of null
+
 
 
 Copyright and license
