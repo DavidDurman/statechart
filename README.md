@@ -67,16 +67,6 @@ An event is a stimulus upon which you might want to react. An event can have the
 The state machine dispatches three reserved events: `init`, `entry` and `exit`. These are special
 events that you might react on when an initial transition to a state takes place, when a state is entered or exited.
 They default to empty for every state and run on every transition whether defined in that particular state or not.
-You do not need to call `fsm.dispatch('init')` to init a state, for example, whether you have overridden the default
-empty event or not.
-
-If you would like to transition immediately upon initializing a state, set it's `init` attribute to the name of the
-state to which the state machine should transition.  Note: setting the `init` attribute to the name of an event
-that you would like to dispatch is NOT valid and will cause errors to be thrown.
-
-    myState: {
-        init: "someOtherState"
-    }
 
 Assume we use the same machine as defined in the above example and run it like this:
 
@@ -101,6 +91,38 @@ State machine is in the `On` state. The `on` event is dispatched
 * [On] entry
 * [On] init
 
+init
+====
+
+The `init` event can be set in only one way.
+
+* &lt;string> stateName - execution of the `init` event will cause immediate transition to this state.
+
+If you would like to transition immediately upon initializing a state, set it's `init` attribute to the name of the
+state to which the state machine should transition.  Note: setting the `init` attribute to the name of an event
+that you would like to dispatch is NOT valid and will cause errors to be thrown.
+
+    myState: {
+        init: "someOtherState"
+    }
+
+entry
+=====
+
+The `entry` event can be set in the following ways:
+
+* &lt;object> eventObject - with `guard` and/or `action` only. It's not possible to transition on `entry`.
+* &lt;Array &lt;object>> eventArray - array of event objects, again, without `target`.
+* &lt;Function> action - function to be run directly as an action.
+
+entry
+=====
+
+The `entry` event can be set in the following ways:
+
+* &lt;object> eventObject - with `target`, `guard`, and/or `action`.
+* &lt;Array &lt;object>> eventArray - array of event objects.
+* &lt;Function> action - function to be run directly as an action.
 
 Custom events
 -------------
@@ -118,6 +140,12 @@ guard the transition if there is a certain condition that must be met in order f
     },
     'AnotherState': {
     }
+
+Custom events can be defined in the following ways:
+
+* &lt;object> eventObject - with `target`, `guard`, and/or `action`.
+* &lt;Array &lt;object>> eventArray - array of event objects.
+* &lt;Function> action - function to be run directly as an action.
 
 Event Actions
 -------------
@@ -151,12 +179,6 @@ State nesting can simply be done by nesting objects.
 
 See https://github.com/DavidDurman/statechart/blob/master/test/samek.js for a complete example of a non-trivial
 state machine.
-
-Troubleshooting
----------------
-
-### TypeError: Cannot read property 'equals' of null
-
 
 
 Copyright and license
