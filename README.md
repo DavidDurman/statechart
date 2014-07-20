@@ -29,7 +29,7 @@ States can have the following attributes:
 * `states` (object) an associative array of states to whom this state is the parent state or "superstate".
 * any other attributes of the object are assumed to be events with the object key being the event's name. Events are detailed below.
 
-[![Light switch statechart](http://figurepool.com/figure/view/7774b3b7f5ceba1d47fac95f540f82ec.png)](http://figurepool.com/figure/view/Light_switch_statechart-7774b3b7f5ceba1d47fac95f540f82ec.html)
+[![Light switch statechart](http://oi61.tinypic.com/24m6qo9.jpg)](http://oi61.tinypic.com/24m6qo9.jpg)
 
     var lightSwitch = _.extend({
         
