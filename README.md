@@ -91,8 +91,7 @@ State machine is in the `On` state. The `on` event is dispatched
 * [On] entry
 * [On] init
 
-init
-====
+### init
 
 The `init` event can be set in only one way.
 
@@ -106,8 +105,7 @@ that you would like to dispatch is NOT valid and will cause errors to be thrown.
         init: "someOtherState"
     }
 
-entry
-=====
+### entry
 
 The `entry` event can be set in the following ways:
 
@@ -115,10 +113,9 @@ The `entry` event can be set in the following ways:
 * &lt;Array &lt;object>> eventArray - array of event objects, again, without `target`.
 * &lt;Function> action - function to be run directly as an action.
 
-entry
-=====
+### exit
 
-The `entry` event can be set in the following ways:
+The `exit` event can be set in the following ways:
 
 * &lt;object> eventObject - with `target`, `guard`, and/or `action`.
 * &lt;Array &lt;object>> eventArray - array of event objects.
