@@ -21,8 +21,8 @@ describe("a state", function() {
             initialState: "A",
             states: {
                 A: {
-                    entry: new Spy(),
-                    exit: new Spy(),
+                    entry: Spy(),
+                    exit: Spy(),
                     goA: { target: "A" },
                     goB: { target: "B" }
                 }
@@ -466,7 +466,8 @@ describe("the reserved event", function () {
                         action: Spy()
                     }, {
                         target: 'C',
-                        guard: function () { return false; }
+                        guard: function () { return false; },
+                        action: Spy()
                     }],
                     states: {
                         B: {},
@@ -491,6 +492,10 @@ describe("the reserved event", function () {
 
             it("calls the action of the event whose guard passes", function () {
                 expect(fsm.states.A.exit[0].action.called).to.be.true;
+            });
+
+            it("does not call the action of the event whose guard fails", function () {
+                expect(fsm.states.A.exit[1].action.called).to.be.false;
             });
         });
 
@@ -563,6 +568,7 @@ describe("a custom event `move`", function () {
 
         beforeEach(function () {
             params.states.A = {
+                exit: Spy(),
                 move: {
                     target: 'B',
                     action: Spy()
@@ -590,6 +596,10 @@ describe("a custom event `move`", function () {
 
         it("runs the action", function () {
             expect(fsm.states.A.move.action.called).to.be.true;
+        });
+
+        it("does not run the exit action of a parent state of a nested state", function () {
+            expect(fsm.states.A.exit.called).to.be.false;
         });
     });
 
