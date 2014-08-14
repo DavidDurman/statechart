@@ -24,7 +24,11 @@ describe("a state", function() {
                     entry: Spy(),
                     exit: Spy(),
                     goA: { target: "A" },
-                    goB: { target: "B" }
+                    goB: { target: "B" },
+                    goC: { target: "C" }
+                },
+                C: {
+                    goA: { target: "A" },
                 }
             }
         };
@@ -40,6 +44,102 @@ describe("a state", function() {
 
         it("runs the 'entry' event", function () {
             expect(fsm.states.A.entry.called).to.be.true;
+        });
+
+        describe("when transitioning to another state", function () {
+            var exitSpy1, entrySpy1;
+
+            beforeEach(function () {
+                exitSpy1 = Spy();
+                entrySpy1 = Spy();
+                params.states.A.exit = exitSpy1;
+                params.states.C.entry = exitSpy1;
+                fsm.dispatch('goC');
+            });
+
+            it("moves to the right state", function () {
+                expect(fsm.currentState().name).to.equal('C');
+            });
+
+            it("it fires the last state's exit event", function () {
+                expect(exitSpy1.called).to.be.true;
+            });
+
+            it("it fires the current state's entry event", function () {
+                expect(entrySpy1.called).to.be.true;
+            });
+
+            describe("when transitioning back", function () {
+                var exitSpy2, entrySpy2;
+
+                beforeEach(function () {
+                    exitSpy2 = Spy();
+                    entrySpy2 = Spy();
+                    params.states.C.exit = exitSpy2;
+                    params.states.A.entry = exitSpy2;
+                    fsm.dispatch('goA');
+                });
+
+                it("moves to the right state", function () {
+                    expect(fsm.currentState().name).to.equal('A');
+                });
+
+                it("it fires the last state's exit event", function () {
+                    expect(exitSpy2.called).to.be.true;
+                });
+
+                it("it fires the current state's entry event", function () {
+                    expect(entrySpy2.called).to.be.true;
+                });
+
+                describe("when transitioning to the other state again", function () {
+                    var exitSpy3, entrySpy3;
+
+                    beforeEach(function () {
+                        exitSpy3 = Spy();
+                        entrySpy3 = Spy();
+                        params.states.A.exit = exitSpy3;
+                        params.states.C.entry = exitSpy3;
+                        fsm.dispatch('goC');
+                    });
+
+                    it("moves to the right state", function () {
+                        expect(fsm.currentState().name).to.equal('C');
+                    });
+
+                    it("it fires the last state's exit event", function () {
+                        expect(exitSpy3.called).to.be.true;
+                    });
+
+                    it("it fires the current state's entry event", function () {
+                        expect(entrySpy3.called).to.be.true;
+                    });
+
+                    describe("when transitioning back", function () {
+                        var exitSpy4, entrySpy4;
+
+                        beforeEach(function () {
+                            exitSpy4 = Spy();
+                            entrySpy4 = Spy();
+                            params.states.C.exit = exitSpy4;
+                            params.states.A.entry = exitSpy4;
+                            fsm.dispatch('goA');
+                        });
+
+                        it("moves to the right state", function () {
+                            expect(fsm.currentState().name).to.equal('A');
+                        });
+
+                        it("it fires the last state's exit event", function () {
+                            expect(exitSpy4.called).to.be.true;
+                        });
+
+                        it("it fires the current state's entry event", function () {
+                            expect(entrySpy4.called).to.be.true;
+                        });
+                    });
+                });
+            });
         });
     });
 
@@ -96,6 +196,131 @@ describe("a state", function() {
             expect(fsm.states.A.exit.called).to.be.true;
             expect(fsm.states.A.entry.called).to.be.true;
             expect(fsm.currentState().name).to.equal('A');
+        });
+    });
+});
+
+describe("an fsm with nested states", function() {
+    var fsm;
+    var params;
+
+    beforeEach(function () {
+        params = {
+            initialState: "A",
+            states: {
+                A: {
+                    entry: Spy(),
+                    exit: Spy(),
+                    goA: { target: "A" },
+                    goB: { target: "B" },
+                    goC: { target: "C" },
+                    goD: { target: "D" },
+                    goE: { target: "E" },
+                    states: {
+                        D: {
+                            entry: Spy(),
+                            exit: Spy(),
+                            goE2: { target: "E" },
+                            goF: { target: "F" },
+                            states: {
+                                F: {
+                                    entry: Spy(),
+                                    exit: Spy(),
+                                    goE3: { target: "E" }
+                                }
+                            }
+                        },
+                        E: {
+                            entry: Spy(),
+                            exit: Spy(),
+                            goD2: { target: "D" }
+                        }
+                    }
+                },
+                C: {
+                    goA: { target: "A" },
+                }
+            }
+        };
+
+        fsm = _.extend(params, Statechart);
+        fsm.run();
+    });
+
+    describe("moving to a nested state from it's parent", function () {
+        beforeEach(function () {
+            fsm.dispatch("goD");
+        });
+
+        it("moves to the right state", function () {
+            expect(fsm.currentState().name).to.equal("D");
+        });
+
+        it("does not fire the non-nested state's exit event", function () {
+            expect(fsm.states.A.exit.called).not.to.be.true;
+        });
+    });
+
+    describe("moving to a nested state from it's nested sibling", function () {
+        beforeEach(function () {
+            fsm.dispatch("goD");
+            fsm.dispatch("goE2");
+        });
+
+        it("moves to the right state", function () {
+            expect(fsm.currentState().name).to.equal("E");
+        });
+
+        it("does not fire the non-nested state's exit event", function () {
+            expect(fsm.states.A.exit.called).not.to.be.true;
+        });
+
+        it("fires the first nested state's entry event", function () {
+            expect(fsm.states.A.states.D.entry.called).to.be.true;
+        });
+
+        it("fires the first nested state's exit event", function () {
+            expect(fsm.states.A.states.D.exit.called).to.be.true;
+        });
+
+        it("fires the second nested state's entry event", function () {
+            expect(fsm.states.A.states.E.entry.called).to.be.true;
+        });
+    });
+
+    describe("moving to a nested state from it's nested sibling's child", function () {
+        beforeEach(function () {
+            fsm.dispatch("goD");
+            fsm.dispatch("goF");
+            fsm.dispatch("goE3");
+        });
+
+        it("moves to the right state", function () {
+            expect(fsm.currentState().name).to.equal("E");
+        });
+
+        it("does not fire the non-nested state's exit event", function () {
+            expect(fsm.states.A.exit.called).not.to.be.true;
+        });
+
+        it("fires the first nested state's entry event", function () {
+            expect(fsm.states.A.states.D.entry.called).to.be.true;
+        });
+
+        it("fires the first nested state's child's entry event", function () {
+            expect(fsm.states.A.states.D.states.F.entry.called).to.be.true;
+        });
+
+        it("fires the first nested state's child's exit event", function () {
+            expect(fsm.states.A.states.D.states.F.exit.called).to.be.true;
+        });
+
+        it("fires the first nested state's exit event", function () {
+            expect(fsm.states.A.states.D.exit.called).to.be.true;
+        });
+
+        it("fires the second nested state's entry event", function () {
+            expect(fsm.states.A.states.E.entry.called).to.be.true;
         });
     });
 });
