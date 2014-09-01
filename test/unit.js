@@ -934,3 +934,52 @@ describe("a custom event `move`", function () {
         });
     });
 });
+
+describe('pushdown state support', function() {
+    var fsm;
+    var params;
+
+    beforeEach(function () {
+        params = {
+            initialState: "A",
+            pushStates: {
+                E: {
+                    entry: function() {
+                        this.dummyEntryCalled = true;
+                    },
+                    exit: Spy(),
+                    varOn: function() {
+                        this.aVar = true;
+                    }
+                }
+            },
+            states: {
+                A: {
+                    entry: Spy(),
+                    exit: Spy(),
+                    goA: { target: "A" },
+                    goB: { target: "B" },
+                    goC: { target: "C" },
+                    goE: function() {
+                        this.pushState('E');
+                    }
+                },
+                C: {
+                    goA: { target: "A" }
+                }
+            }
+        };
+
+        fsm = _.extend(params, Statechart);
+        fsm.run();
+    });
+    it('calls pushState entry function', function() {
+        fsm.dispatch('goE');
+        expect(fsm.dummyEntryCalled).to.equal(true);
+    });
+    it('should handle events in pushstates first', function() {
+        fsm.dispatch('goE');
+        fsm.dispatch('varOn');
+        expect(fsm.aVar).to.equal(true);
+    });
+});
