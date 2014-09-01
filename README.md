@@ -167,15 +167,67 @@ State nesting can simply be done by nesting objects.
     'MyState': {
         'init': 'MyChildState',
         'eventA': { ... },
-        'MyChildState': {
-            'entry': function() { console.log('MyChildState being entered.'); },
-            'eventB': { ... }
+        'states': {
+            'MyChildState': {
+                'entry': function() { console.log('MyChildState being entered.'); },
+                'eventB': { ... }
+            }
         }
     }
 
 
 See https://github.com/DavidDurman/statechart/blob/master/test/samek.js for a complete example of a non-trivial
 state machine.
+
+
+Pushdown Automata States
+------------------------
+
+Sometimes you need to reuse states in any other state rather than to have a strictly defined
+state machine.
+
+The idea is to have a stack of pushdown states that will be traversed first, regardless of the current state.
+
+E.g. in a game you may have a predefined state Game1, but you could push states walking and shooting to every state,
+so it does not have to be redefined everywhere.
+
+    'inGame': {
+        'init': 'Game1',
+        'pushStates': {
+            'walking': {
+                entry: function() {
+                    this.showWalkingAnimation();
+                },
+                'exit': function() {
+                    this.hideWalkingAnimation();
+                }
+            },
+            'shooting': {
+                entry: function() {
+                    this.showShootingAnimation();
+                },
+                'exit': function() {
+                    this.hideShootingAnimation();
+                }
+            }
+        },
+        'startButton': { ... },
+        'states': {
+            'Game1': {
+                'entry': function() { console.log('Game1 being entered.'); },
+                'eventB': { ... }
+            }
+        }
+    }
+
+
+To push a state to the stack you can call
+
+    lightSwtich.pushState('shooting');
+    
+To remove last pushed state call
+
+    lightSwtich.popState();
 
 
 Copyright and license
