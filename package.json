@@ -1,6 +1,6 @@
 {
   "name": "statechart",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "StateChart implementation.",
   "homepage": "http://github.com/DavidDurman/statechart/",
   "author": "David Durman <daviddurman@gmail.com>",
