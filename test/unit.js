@@ -947,7 +947,9 @@ describe('pushdown state support', function() {
                     entry: function() {
                         this.dummyEntryECalled = true;
                     },
-                    exit: Spy(),
+                    exit: function() {
+                        this.exitECalled = true;
+                    },
                     varOn: function() {
                         this.dummyEVar = true;
                     }
@@ -956,7 +958,9 @@ describe('pushdown state support', function() {
                     entry: function() {
                         this.dummyEntryFCalled = true;
                     },
-                    exit: Spy(),
+                    exit: function() {
+                        this.exitFCalled = true;
+                    },
                     varOn: function() {
                         this.dummyFVar = true;
                     }
@@ -1002,7 +1006,7 @@ describe('pushdown state support', function() {
         fsm.dispatch('varOn');
         expect(fsm.dummyEVar).to.equal(true);
         expect(fsm.dummyAVar).to.equal(undefined);
-        fsm.popState();
+        fsm.popState('E');
         fsm.dispatch('varOn');
         expect(fsm.dummyAVar).to.equal(true);
     });
@@ -1019,4 +1023,15 @@ describe('pushdown state support', function() {
         fsm.dispatch('eventInStateAOnly');
         expect(fsm.eventInStateAOnlyVar).to.equal(true);
     });
+    describe('popState', function() {
+        it('should pop given state', function() {
+            fsm.pushState('E');
+            fsm.pushState('F');
+            expect(fsm.exitECalled).to.equal(undefined);
+            fsm.popState('E');
+            expect(fsm.exitFCalled).to.equal(undefined);
+            expect(fsm.exitECalled).to.equal(true);
+        });
+    });
+
 });
