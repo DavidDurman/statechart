@@ -934,3 +934,104 @@ describe("a custom event `move`", function () {
         });
     });
 });
+
+describe('pushdown state support', function() {
+    var fsm;
+    var params;
+
+    beforeEach(function () {
+        params = {
+            initialState: "A",
+            pushStates: {
+                E: {
+                    entry: function() {
+                        this.dummyEntryECalled = true;
+                    },
+                    exit: function() {
+                        this.exitECalled = true;
+                    },
+                    varOn: function() {
+                        this.dummyEVar = true;
+                    }
+                },
+                F: {
+                    entry: function() {
+                        this.dummyEntryFCalled = true;
+                    },
+                    exit: function() {
+                        this.exitFCalled = true;
+                    },
+                    varOn: function() {
+                        this.dummyFVar = true;
+                    }
+                }
+            },
+            states: {
+                A: {
+                    entry: Spy(),
+                    exit: Spy(),
+                    goA: { target: "A" },
+                    goB: { target: "B" },
+                    goC: { target: "C" },
+                    varOn: function() {
+                      this.dummyAVar = true;
+                    },
+                    eventInStateAOnly: function() {
+                        this.eventInStateAOnlyVar = true;
+                    },
+                    goE: function() {
+                        this.pushState('E');
+                    }
+                },
+                C: {
+                    goA: { target: "A" }
+                }
+            }
+        };
+
+        fsm = _.extend(params, Statechart);
+        fsm.run();
+    });
+    it('calls pushState entry function', function() {
+        fsm.dispatch('goE');
+        expect(fsm.dummyEntryECalled).to.equal(true);
+    });
+    it('should handle events in pushstates first', function() {
+        fsm.dispatch('goE');
+        fsm.dispatch('varOn');
+        expect(fsm.dummyEVar).to.equal(true);
+    });
+    it('should go to regular statemachine if pushDownStack is empty', function() {
+        fsm.dispatch('goE');
+        fsm.dispatch('varOn');
+        expect(fsm.dummyEVar).to.equal(true);
+        expect(fsm.dummyAVar).to.equal(undefined);
+        fsm.popState('E');
+        fsm.dispatch('varOn');
+        expect(fsm.dummyAVar).to.equal(true);
+    });
+    it('should handle event first in last pushed state', function() {
+        fsm.pushState('E');
+        fsm.pushState('F');
+        fsm.dispatch('varOn');
+        expect(fsm.dummyEVar).to.equal(undefined);
+        expect(fsm.dummyFVar).to.equal(true);
+    });
+    it('should bubble up to regular state machine if no handler in pushstate exists', function () {
+        fsm.pushState('E');
+        fsm.pushState('F');
+        fsm.dispatch('eventInStateAOnly');
+        expect(fsm.eventInStateAOnlyVar).to.equal(true);
+    });
+    describe('popState', function() {
+        it('should pop given state', function() {
+            fsm.pushState('E');
+            fsm.pushState('F');
+            expect(fsm.exitECalled).to.equal(undefined);
+            fsm.popState('E');
+            expect(fsm.exitFCalled).to.equal(undefined);
+            expect(fsm.exitECalled).to.equal(true);
+        });
+    });
+
+});
